@@ -1,4 +1,4 @@
-;;; typo.el --- Minor mode for typographic editing
+;;; typo.el --- Minor mode for typographic editing  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2012 Jorgen Schaefer
 
@@ -344,15 +344,13 @@ marks will be inserted."
        (insert double-open))))))
 
 (defun typo-cycle-ellipsis (arg)
-  "Add periods. The third period will add an ellipsis.
-
-If used with a numeric prefix argument N, N periods will be inserted."
+  "The third argumented period replaces the last three priods by an ellipsis."
   (interactive "P")
-  (if (or (typo-electricity-disabled-p) arg)
-      (call-interactively 'self-insert-command)
-    (if (looking-back "\\.\\.")
-        (replace-match "…")
-      (call-interactively 'self-insert-command))))
+  (if (and arg
+           (not (typo-electricity-disabled-p))
+           (looking-back "\\.\\."))
+      (replace-match "…")
+    (call-interactively 'self-insert-command)))
 
 (defmacro define-typo-cycle (name docstring cycle)
   "Define a typo command that cycles through various options.
