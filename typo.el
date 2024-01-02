@@ -344,13 +344,19 @@ marks will be inserted."
        (insert double-open))))))
 
 (defun typo-cycle-ellipsis (arg)
-  "The third argumented period replaces the last three priods by an ellipsis."
+  "The third argumented period key replaces the last two priods by an ellipsis."
   (interactive "P")
   (if (and arg
            (not (typo-electricity-disabled-p))
            (looking-back "\\.\\."))
       (replace-match "…")
     (call-interactively 'self-insert-command)))
+
+(defcustom typo-cycle-exception-par-mode nil
+  "An alist consists of cons ('mode . disable-p-function) meaning, in
+the major-mode `mode' and if (funcall disable-p) gives non-zero,
+do not cycle.  Don't work if put \\=#\\=' before
+`disable-p-function'")
 
 (defmacro define-typo-cycle (name docstring cycle)
   "Define a typo command that cycles through various options.
@@ -366,7 +372,9 @@ CYCLE is a list of strings to cycle through."
   `(defun ,name (arg)
      ,docstring
      (interactive "P")
-     (if (or (typo-electricity-disabled-p) arg)
+     (if (or arg
+             (typo-electricity-disabled-p)
+             (funcall (alist-get major-mode typo-cycle-exception-par-mode)))
          (call-interactively 'self-insert-command)
        (typo-insert-cycle ',cycle))))
 
