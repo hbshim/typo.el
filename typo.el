@@ -302,7 +302,8 @@ marks will be inserted."
                                  single-open single-close))
 
           (after-any-opening (looking-back (regexp-opt (list double-open
-                                                             single-open)))))
+                                                             single-open))
+                                           nil)))
      (cond
       ;; For languages that use the same symbol for opening and
       ;; closing (Finnish, Swedish...), the simplest thing to do is to
@@ -323,7 +324,7 @@ marks will be inserted."
        ;; (This misses the situation where we start a quotation with an
        ;; inner quotation, but that's indistinguishable from cycling
        ;; through keys, and the latter is more common.)
-       (if (looking-back "\\s-")
+       (if (looking-back "\\s-" nil)
            (insert single-open)
          ;; Otherwise, close the double one
          (insert double-close)))
@@ -348,7 +349,7 @@ marks will be inserted."
   (interactive "P")
   (if (and arg
            (not (typo-electricity-disabled-p))
-           (looking-back "\\.\\."))
+           (looking-back "\\.\\." nil))
       (replace-match "…")
     (call-interactively 'self-insert-command)))
 
@@ -356,7 +357,8 @@ marks will be inserted."
   "An alist consists of cons ('mode . disable-p-function) meaning, in
 the major-mode `mode' and if (funcall disable-p) gives non-zero,
 do not cycle.  Don't work if put \\=#\\=' before
-`disable-p-function'")
+`disable-p-function'"
+  :type '(cons symbol symbol))
 
 (defmacro define-typo-cycle (name docstring cycle)
   "Define a typo command that cycles through various options.
