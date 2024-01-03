@@ -210,6 +210,27 @@ default C-x 8 prefix map.
   :global t
   :keymap typo-global-mode-map)
 
+(defvar typo-mode-syntax-table
+  (let ((syntab (make-syntax-table text-mode-syntax-table)))
+    (modify-syntax-entry 8211 "_" syntab)   ; EN DASH
+    (modify-syntax-entry 8212 "_" syntab)   ; EM DASH
+    (modify-syntax-entry 8216 " " syntab)   ;LEFT SINGLE QUOTATION MARK
+    (modify-syntax-entry 8217 "w p" syntab) ; RIGHT SINGLE QUOTATION MARK
+    (modify-syntax-entry 8220 "(" syntab)   ; LEFT DOUBLE QUOTATION MARK
+    (modify-syntax-entry 8221 ")" syntab)   ; RIGHT DOUBLE QUOTATION MARK
+    syntab)
+  "Syntax table for `typo-mode'.")
+
+(define-advice ispell-send-string (:filter-args (args) typo-mode-replace-apostrophe)
+  "Replace \"’\", such as in \"isn’t\", to \"'\" to it to the spell-checker."
+  (cons (replace-regexp-in-string "’" "'" (car args))
+        (cdr args)))
+
+(define-advice ispell-parse-output (:filter-args (args) typo-mode-update-apostrophe)
+  "Replace \"'\" to \"’\" in output from the spell-checker."
+  (cons (replace-regexp-in-string "'" "’" (car args))
+        (cdr args)))
+
 (defun typo-change-language (language)
   "Change the current language used for quotation marks."
   (interactive (list (completing-read

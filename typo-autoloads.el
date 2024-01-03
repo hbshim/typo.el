@@ -66,7 +66,7 @@ The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
 (fn &optional ARG)" t)
-(register-definition-prefixes "typo" '("define-typo-cycle" "typo-"))
+(register-definition-prefixes "typo" '("define-typo-cycle" "ispell-" "typo-"))
 
 
 ;;; End of scraped data
