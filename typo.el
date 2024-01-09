@@ -310,7 +310,9 @@ mark (use C-q \" or C-o \" to force inserting one).
 If used with a numeric prefix argument, only typewriter quotation
 marks will be inserted."
   (interactive "P")
-  (if (or (typo-electricity-disabled-p) arg)
+  (if (or arg
+          (typo-electricity-disabled-p)
+          (funcall (alist-get major-mode typo-fancify-exception-par-mode)))
       (call-interactively 'self-insert-command)
     (let* ((double-open (typo-open-double-quotation-mark))
            (double-close (typo-close-double-quotation-mark))
@@ -374,7 +376,7 @@ marks will be inserted."
       (replace-match "…")
     (call-interactively 'self-insert-command)))
 
-(defcustom typo-cycle-exception-par-mode nil
+(defcustom typo-fancify-exception-par-mode nil
   "An alist consists of cons ('mode . disable-p-function) meaning, in
 the major-mode `mode' and if (funcall disable-p) gives non-zero,
 do not cycle.  Don't work if put \\=#\\=' before
@@ -397,7 +399,7 @@ CYCLE is a list of strings to cycle through."
      (interactive "P")
      (if (or arg
              (typo-electricity-disabled-p)
-             (funcall (alist-get major-mode typo-cycle-exception-par-mode)))
+             (funcall (alist-get major-mode typo-fancify-exception-par-mode)))
          (call-interactively 'self-insert-command)
        (typo-insert-cycle ',cycle))))
 
